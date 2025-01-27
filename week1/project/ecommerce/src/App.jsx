@@ -26,13 +26,13 @@ function Header() {
 function FilteredCategories({ allCategories }) {
     return (
         <section>
-            <div>
-                <ul>
-                    {allCategories.map((category, index) => (
-                        <li key={index}>{category}</li>
-                    ))}
-                </ul>
-            </div>
+            <ul className="categories">
+                {allCategories.map((category, index) => (
+                    <li key={index} className="categories--item">
+                        {category}
+                    </li>
+                ))}
+            </ul>
         </section>
     );
 }
@@ -40,7 +40,7 @@ function FilteredCategories({ allCategories }) {
 function ProductList({ products }) {
     return (
         <section>
-            <ul>
+            <ul className="products">
                 {products.map((product) => (
                     <ProductItem key={product.title} product={product} />
                 ))}
@@ -51,13 +51,13 @@ function ProductList({ products }) {
 
 function ProductItem({ product }) {
     return (
-        <li className="product--item">
+        <li className="products--item">
             <img
                 src={product.image}
                 alt={product.title}
-                className="product--image"
+                className="products--image"
             />
-            <div className="product--title">{product.title}</div>
+            <div className="products--title">{product.title}</div>
         </li>
     );
 }
