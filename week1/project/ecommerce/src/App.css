@@ -1,4 +1,5 @@
 #root {
+    display: block;
 }
 
 *,
@@ -22,6 +23,10 @@ a {
 table {
     border-collapse: collapse;
     border-spacing: 0;
+}
+
+main {
+    display: block;
 }
 
 body {
@@ -130,4 +135,9 @@ h1 {
     .products--item {
         width: calc(25% - 16px);
     }
+}
+
+.categories--item-selected {
+    background-color: #bdbdc1;
+    font-weight: bold;
 }
