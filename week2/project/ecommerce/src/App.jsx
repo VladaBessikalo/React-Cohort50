@@ -10,13 +10,11 @@ export default function App() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
-    const [loadingFilteredProducts, setLoadingFilteredProducts] =
-        useState(false);
 
-    async function fetchData(setData, query, setLoading) {
+    async function fetchData(url, setData, setLoading) {
         setLoading(true);
         try {
-            const response = await fetch(`https://fakestoreapi.com/${query}`);
+            const response = await fetch(url);
             const data = await response.json();
             setData(data);
         } catch (error) {
@@ -27,39 +25,41 @@ export default function App() {
     }
 
     useEffect(() => {
-        fetchData(setProducts, 'products', setLoadingProducts);
-        fetchData(setCategories, 'products/categories', setLoadingCategories);
+        fetchData(
+            'https://fakestoreapi.com/products/categories',
+            setCategories,
+            setLoadingCategories
+        );
+        fetchData(
+            'https://fakestoreapi.com/products',
+            setProducts,
+            setLoadingProducts
+        );
     }, []);
 
-    const handleCategorySelect = (category) => {
-        setLoadingFilteredProducts(true);
-        setSelectedCategory(category);
-
-        setTimeout(() => {
-            setLoadingFilteredProducts(false);
-        }, 500);
-    };
-
-    const filteredProducts = selectedCategory
-        ? products.filter((product) => product.category === selectedCategory)
-        : products;
+    useEffect(() => {
+        const url = selectedCategory
+            ? `https://fakestoreapi.com/products/category/${selectedCategory}`
+            : 'https://fakestoreapi.com/products';
+        fetchData(url, setProducts, setLoadingProducts);
+    }, [selectedCategory]);
 
     return (
         <div className="app">
             <Header />
-            {loadingCategories || loadingProducts ? (
+            {loadingCategories ? (
                 <p>Loading...</p>
             ) : (
                 <main>
                     <Categories
                         categories={categories}
-                        onCategorySelect={handleCategorySelect}
+                        onCategorySelect={setSelectedCategory}
                         selectedCategory={selectedCategory}
                     />
-                    {loadingFilteredProducts ? (
+                    {loadingProducts ? (
                         <p>Loading...</p>
                     ) : (
-                        <ProductList products={filteredProducts} />
+                        <ProductList products={products} />
                     )}
                 </main>
             )}
