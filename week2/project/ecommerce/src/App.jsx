@@ -10,6 +10,8 @@ export default function App() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingCategories, setLoadingCategories] = useState(false);
+    const [loadingFilteredProducts, setLoadingFilteredProducts] =
+        useState(false);
 
     async function fetchData(setData, query, setLoading) {
         setLoading(true);
@@ -30,7 +32,12 @@ export default function App() {
     }, []);
 
     const handleCategorySelect = (category) => {
+        setLoadingFilteredProducts(true);
         setSelectedCategory(category);
+
+        setTimeout(() => {
+            setLoadingFilteredProducts(false);
+        }, 500);
     };
 
     const filteredProducts = selectedCategory
@@ -49,7 +56,11 @@ export default function App() {
                         onCategorySelect={handleCategorySelect}
                         selectedCategory={selectedCategory}
                     />
-                    <ProductList products={filteredProducts} />
+                    {loadingFilteredProducts ? (
+                        <p>Loading...</p>
+                    ) : (
+                        <ProductList products={filteredProducts} />
+                    )}
                 </main>
             )}
         </div>
