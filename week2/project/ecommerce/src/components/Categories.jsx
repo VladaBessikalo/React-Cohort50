@@ -10,9 +10,8 @@ export default function Categories({
                     <li
                         key={index}
                         className={`categories--item ${
-                            selectedCategory === category
-                                ? 'categories--item-selected'
-                                : ''
+                            selectedCategory === category &&
+                            'categories--item-selected'
                         }`}
                         onClick={() => onCategorySelect(category)}
                     >
