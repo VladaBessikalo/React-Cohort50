@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import ProductItem from './ProductItem';
 
 export default function ProductList({ products }) {
