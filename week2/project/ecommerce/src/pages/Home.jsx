@@ -1,46 +1,34 @@
-import { useState, useEffect } from 'react';
-import { fetchData } from '../util/api.js';
+import { useState } from 'react';
 import Categories from '../components/Categories.jsx';
 import ProductList from '../components/ProductList.jsx';
 import Header from '../components/Header.jsx';
+import useFetch from '../hooks/useFetch.js';
 
 export default function Home() {
-    const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [loadingProducts, setLoadingProducts] = useState(false);
-    const [loadingCategories, setLoadingCategories] = useState(false);
-    const [errorProducts, setErrorProducts] = useState(null);
-    const [errorCategories, setErrorCategories] = useState(null);
 
-    useEffect(() => {
-        fetchData(
-            'https://fakestoreapi.com/products/categories',
-            setCategories,
-            setLoadingCategories,
-            setErrorCategories
-        );
-        fetchData(
-            'https://fakestoreapi.com/products',
-            setProducts,
-            setLoadingProducts,
-            setErrorProducts
-        );
-    }, []);
+    const productsUrl = selectedCategory
+        ? `https://fakestoreapi.com/products/category/${selectedCategory}`
+        : 'https://fakestoreapi.com/products';
 
-    useEffect(() => {
-        const url = selectedCategory
-            ? `https://fakestoreapi.com/products/category/${selectedCategory}`
-            : 'https://fakestoreapi.com/products';
-        fetchData(url, setProducts, setLoadingProducts, setErrorProducts);
-    }, [selectedCategory]);
+    const {
+        data: categories,
+        loading: loadingCategories,
+        error: errorCategories
+    } = useFetch('https://fakestoreapi.com/products/categories');
+
+    const {
+        data: products,
+        loading: loadingProducts,
+        error: errorProducts
+    } = useFetch(productsUrl);
 
     return (
         <div>
             <Header />
             <>
                 {loadingCategories ? (
-                    <p>Loading...</p>
+                    <p>Loading categories...</p>
                 ) : errorCategories ? (
                     <p className="error">Error: {errorCategories}</p>
                 ) : (
@@ -50,12 +38,12 @@ export default function Home() {
                         selectedCategory={selectedCategory}
                     />
                 )}
-                {loadingProducts ? (
-                    <p>Loading...</p>
+                {selectedCategory && loadingProducts ? (
+                    <p>Loading products...</p>
                 ) : errorProducts ? (
                     <p className="error">Error: {errorProducts}</p>
                 ) : (
-                    <ProductList products={products} />
+                    <ProductList products={products || []} />
                 )}
             </>
         </div>
