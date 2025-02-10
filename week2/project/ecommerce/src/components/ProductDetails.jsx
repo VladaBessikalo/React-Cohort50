@@ -36,7 +36,8 @@ export default function ProductDetails() {
 
     return (
         <div className="product-details">
-            <h2>{product.title}</h2>
+            <h1>{product.title}</h1>
+
             <img src={product.image} alt={product.title} width="200" />
             <p>{product.description}</p>
         </div>
