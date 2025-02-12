@@ -1,47 +1,50 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useFavorites } from '../context/FavoritesContext.jsx';
 import Header from '../components/Header.jsx';
+import heartRegular from '../assets/heart-regular.svg';
+import heartSolid from '../assets/heart-solid.svg';
+import useFetch from '../hooks/useFetch.js';
 
 export default function ProductDetails() {
     const { id } = useParams();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { favoriteIds, toggleFavorite } = useFavorites();
+    const {
+        data: product,
+        loading: loadingProduct,
+        error: errorProduct
+    } = useFetch(`https://fakestoreapi.com/products/${id}`);
 
-    useEffect(() => {
-        async function fetchProduct() {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await fetch(
-                    `https://fakestoreapi.com/products/${id}`
-                );
-                if (!response.ok) {
-                    throw new Error('Failed to fetch product details');
-                }
-                const data = await response.json();
-                setProduct(data);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchProduct();
-    }, [id]);
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p className="error">Error: {error}</p>;
-    if (!product) return <p>Product not found.</p>;
+    const isFavorite = favoriteIds.includes(product.id);
 
     return (
         <div>
-            <Header title={product.title} />
-            <div className="product-details">
-                <img src={product.image} alt={product.title} width="200" />
-                <p>{product.description}</p>
-            </div>
+            {loadingProduct ? (
+                <p>Loading...</p>
+            ) : errorProduct ? (
+                <p className="error">Error: {errorProduct}</p>
+            ) : (
+                <div>
+                    <Header title={product.title} />
+                    <div className="product-details">
+                        <p>{product.description}</p>
+                        <div className="product-details--img-wrapper">
+                            <img
+                                src={product.image}
+                                alt={product.title}
+                                width="200"
+                                className="product-details--img"
+                            />
+                            <div onClick={() => toggleFavorite(product.id)}>
+                                <img
+                                    src={isFavorite ? heartSolid : heartRegular}
+                                    alt="heart"
+                                    className="product--fav"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
